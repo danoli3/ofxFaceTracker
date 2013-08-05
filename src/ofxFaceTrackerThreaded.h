@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef _ofxFaceTracker_Threaded_H_
+#define _ofxFaceTracker_Threaded_H_
+
 #include "ofMain.h"
 #include "ofxCv.h"
 #include "ofxFaceTracker.h"
@@ -12,6 +15,11 @@ public:
 	,meanObjectPointsReady(false) {
 	}
 	~ofxFaceTrackerThreaded() {
+		stopThread();
+		ofSleepMillis(500);
+	}
+	void exit()
+	{
 		stopThread();
 		ofSleepMillis(500);
 	}
@@ -93,6 +101,7 @@ protected:
 				threadedTracker->update(imageBack);
 			} else {
 				ofSleepMillis(4);
+				//sleep(4);
 			}
 			
 			dataMutex.lock();
@@ -124,3 +133,5 @@ protected:
 	ofVec2f position;
 	cv::Mat objectPointsMatBack, objectPointsMatMiddle, objectPointsMatFront; 
 };
+
+#endif

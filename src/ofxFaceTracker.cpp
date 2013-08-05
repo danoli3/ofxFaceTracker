@@ -2,7 +2,6 @@
 
 using namespace ofxCv;
 using namespace cv;
-using namespace FACETRACKER;
 
 // can be compiled with OpenMP for even faster threaded execution
 
@@ -28,16 +27,14 @@ vector<int> ofxFaceTracker::getFeatureIndices(Feature feature) {
 		case LEFT_EYE: return consecutive(36, 42);
 		case RIGHT_EYE: return consecutive(42, 48);
 		case OUTER_MOUTH: return consecutive(48, 60);
-		case INNER_MOUTH: {
+		case INNER_MOUTH:
 			static int innerMouth[] = {48,60,61,62,54,63,64,65};
 			return vector<int>(innerMouth, innerMouth + 8);
-		}
 		case NOSE_BRIDGE: return consecutive(27, 31);
 		case NOSE_BASE: return consecutive(31, 36);
-		case FACE_OUTLINE: {
+		case FACE_OUTLINE:
 			static int faceOutline[] = {17,18,19,20,21,22,23,24,25,26, 16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0};
 			return vector<int>(faceOutline, faceOutline + 27);
-		}
 		case ALL_FEATURES: return consecutive(0, 66);
 	}
 }
@@ -65,19 +62,13 @@ void ofxFaceTracker::setup() {
 	wSize2[1] = 9;
 	wSize2[2] = 7;
 	
-	if(!ofFile("model/face2.tracker").exists() ||
-		 !ofFile("model/face.tri").exists() ||
-		 !ofFile("model/face.con").exists()) {
-		ofLogError() << "Make sure you've placed the files face2.tracker, face.tri and face.con in the data/model/ folder.";
-	}
-	
 	string ftFile = ofToDataPath("model/face2.tracker");
 	string triFile = ofToDataPath("model/face.tri");
 	string conFile = ofToDataPath("model/face.con");
 	
 	tracker.Load(ftFile.c_str());
-	tri = IO::LoadTri(triFile.c_str());
-	con = IO::LoadCon(conFile.c_str());  // not being used right now
+	tri = FACETRACKER::IO::LoadTri(triFile.c_str());
+	con = FACETRACKER::IO::LoadCon(conFile.c_str());  // not being used right now
 }
 
 bool ofxFaceTracker::update(Mat image) {	
@@ -265,6 +256,8 @@ ofxFaceTracker::Direction ofxFaceTracker::getDirection() const {
 		case 0: return FACING_FORWARD;
 		case 1: return FACING_LEFT;
 		case 2: return FACING_RIGHT;
+        default:
+            return FACING_UNKNOWN;
 	}
 }
 

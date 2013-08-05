@@ -37,13 +37,13 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF 
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ///////////////////////////////////////////////////////////////////////////////
-#include <FaceTracker/Tracker.h>
+#include "FaceTracker.h"
 #define db at<double>
 #define TSCALE 0.3
 using namespace FACETRACKER;
 using namespace std;
 //===========================================================================
-void Tracker::Init(CLM &clm,FDet &fdet,MFCheck &fcheck,
+void FaceTracker::Init(CLM &clm,FDet &fdet,MFCheck &fcheck,
 		     cv::Mat &rshape,cv::Scalar &simil)
 {
   _clm = clm; _fdet = fdet; _fcheck = fcheck; 
@@ -54,17 +54,17 @@ void Tracker::Init(CLM &clm,FDet &fdet,MFCheck &fcheck,
   return;
 }
 //===========================================================================
-void Tracker::Load(const char* fname)
+void FaceTracker::Load(const char* fname)
 {
   ifstream s(fname); assert(s.is_open()); this->Read(s); s.close(); return;
 }
 //===========================================================================
-void Tracker::Save(const char* fname)
+void FaceTracker::Save(const char* fname)
 {
   ofstream s(fname); assert(s.is_open()); this->Write(s);s.close(); return;
 }
 //===========================================================================
-void Tracker::Write(ofstream &s)
+void FaceTracker::Write(ofstream &s)
 {
   s << IO::TRACKER << " "; _clm.Write(s); _fdet.Write(s); _fcheck.Write(s); 
   IO::WriteMat(s,_rshape); 
@@ -72,7 +72,7 @@ void Tracker::Write(ofstream &s)
     << _simil[2] << " " << _simil[3] << " "; return;
 }
 //===========================================================================
-void Tracker::Read(ifstream &s,bool readType)
+void FaceTracker::Read(ifstream &s,bool readType)
 {
   if(readType){int type; s >> type; assert(type == IO::TRACKER);}
   _clm.Read(s); _fdet.Read(s); _fcheck.Read(s); IO::ReadMat(s,_rshape); 
@@ -82,7 +82,7 @@ void Tracker::Read(ifstream &s,bool readType)
   _frame = -1; _clm._pdm.Identity(_clm._plocal,_clm._pglobl); return;
 }
 //===========================================================================
-int Tracker::Track(cv::Mat im,vector<int> &wSize, const int  fpd,
+int FaceTracker::Track(cv::Mat im,vector<int> &wSize, const int  fpd,
 		   const int  nIter, const double clamp,const double fTol,
 		   const bool fcheck)
 { 
@@ -113,7 +113,7 @@ int Tracker::Track(cv::Mat im,vector<int> &wSize, const int  fpd,
   if((_rect.width == 0) || (_rect.height == 0))return -1; else return 0;
 }
 //===========================================================================
-void Tracker::InitShape(cv::Rect &r,cv::Mat &shape)
+void FaceTracker::InitShape(cv::Rect &r,cv::Mat &shape)
 {
   assert((shape.rows == _rshape.rows) && (shape.cols == _rshape.cols) &&
 	 (shape.type() == CV_64F));
@@ -131,7 +131,7 @@ void Tracker::InitShape(cv::Rect &r,cv::Mat &shape)
   }return;
 }
 //===========================================================================
-cv::Rect Tracker::ReDetect(cv::Mat &im)
+cv::Rect FaceTracker::ReDetect(cv::Mat &im)
 {
   int x,y; float v,vb=-2;
   int ww = im.cols,hh = im.rows;
@@ -153,7 +153,7 @@ cv::Rect Tracker::ReDetect(cv::Mat &im)
   R.width *= 1.0/TSCALE; R.height *= 1.0/TSCALE; return R;
 }
 //===========================================================================
-cv::Rect Tracker::UpdateTemplate(cv::Mat &im,cv::Mat &s,bool rsize)
+cv::Rect FaceTracker::UpdateTemplate(cv::Mat &im,cv::Mat &s,bool rsize)
 {
   int i,n = s.rows/2; double vx,vy;
   cv::MatIterator_<double> x = s.begin<double>(),y = s.begin<double>()+n;

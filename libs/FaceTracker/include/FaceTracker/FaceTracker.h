@@ -39,16 +39,16 @@
 ///////////////////////////////////////////////////////////////////////////////
 #ifndef __Tracker_h_
 #define __Tracker_h_
-#include <FaceTracker/CLM.h>
-#include <FaceTracker/FDet.h>
-#include <FaceTracker/FCheck.h>
+#include <CLM.h>
+#include <FDet.h>
+#include <FCheck.h>
 namespace FACETRACKER
 {
   //===========================================================================
   /** 
       Face Tracker
   */
-  class Tracker{
+  class FaceTracker{
   public:    
     CLM        _clm;    /**< Constrained Local Model           */
     FDet       _fdet;   /**< Face Detector                     */
@@ -60,13 +60,13 @@ namespace FACETRACKER
     cv::Scalar _simil;  /**< Initialization similarity         */
     
     /** NULL constructor */
-    Tracker(){;}
+    FaceTracker(){;}
     
     /** Constructor from model file */
-    Tracker(const char* fname){this->Load(fname);}
+    FaceTracker(const char* fname){this->Load(fname);}
 
     /** Constructor from components */
-    Tracker(CLM &clm,FDet &fdet,MFCheck &fcheck,
+    FaceTracker(CLM &clm,FDet &fdet,MFCheck &fcheck,
 	    cv::Mat &rshape,cv::Scalar &simil){
       this->Init(clm,fdet,fcheck,rshape,simil);
     }

@@ -13,10 +13,11 @@
  there is no expression applied to the mesh.
  */
 
-#pragma once
+#ifndef _ofxFaceTracker_H_
+#define _ofxFaceTracker_H_
 
 #include "ofxCv.h"
-#include "FaceTracker/Tracker.h"
+#include "FaceTracker.h"
 #include "ExpressionClassifier.h"
 
 class ofxFaceTracker {
@@ -107,8 +108,9 @@ protected:
 	double clamp, tolerance;
 	bool useInvisible;
 	
-	FACETRACKER::Tracker tracker;
+	
 	cv::Mat tri, con;
+    FACETRACKER::FaceTracker tracker;
 	
 	cv::Mat im, gray;
 	cv::Mat objectPoints;
@@ -140,7 +142,7 @@ ofPolyline ofxFaceTracker::getFeature(Feature feature, vector<T> points) const {
 template <class T>
 ofMesh ofxFaceTracker::getMesh(vector<T> points) const {
 	ofMesh mesh;
-	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
+	mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
 	if(!failed) {
 		int n = size();
 		for(int i = 0; i < n; i++) {
@@ -151,3 +153,5 @@ ofMesh ofxFaceTracker::getMesh(vector<T> points) const {
 	}
 	return mesh;
 }
+
+#endif

@@ -39,8 +39,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 #ifndef __CLM_h_
 #define __CLM_h_
-#include <FaceTracker/PDM.h>
-#include <FaceTracker/Patch.h>
+#include <PDM.h>
+#include <Patch.h>
 #include <vector>
 namespace FACETRACKER
 {

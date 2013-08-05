@@ -10,13 +10,29 @@ using namespace cv;
 */
 
 ExpressionClassifier::ExpressionClassifier()
-:sigma(10.0) {
+:sigma(10.0), test(0) {
 }
 
-void ExpressionClassifier::save(string directory) const {
-	ofDirectory dir(directory);
+void ExpressionClassifier::save(string mainDir, string directory) const {
+    string place = mainDir + "/" + directory;
+    ofDirectory dir(place);
 	dir.create(true);
+    
 	for(int i = 0; i < size(); i++) {
+        
+		string filename = dir.path() + "/" + expressions[i].getDescription() + ".yml";
+		cout << "saving to " << filename << endl;
+		expressions[i].save(filename);
+	}
+}
+
+void ExpressionClassifier::save(string directory) const {	
+    
+    ofDirectory dir(directory);
+	dir.create(true);
+    
+	for(int i = 0; i < size(); i++) {
+        
 		string filename = dir.path() + "/" + expressions[i].getDescription() + ".yml";
 		cout << "saving to " << filename << endl;
 		expressions[i].save(filename);
@@ -77,6 +93,35 @@ unsigned int ExpressionClassifier::getPrimaryExpression() const {
 	return maxExpression;
 }
 
+void ExpressionClassifier::drawPrimary() {
+	
+	//if(test >= 6)
+	//	test = 0;
+	expressions[0].draw(0);
+}
+
+unsigned int ExpressionClassifier::getSecondaryExpression() const {
+	int maxExpression = 0;
+	double maxProbability = 0;
+	int secondaryExpression = 0;
+	double secondaryProbability = 0;
+	for(int i = 0; i < probability.size(); i++) {
+		double cur = getProbability(i);
+		if(cur > maxProbability) {
+			maxExpression = i;
+			maxProbability = cur;
+		}
+	}
+	for(int i = 0; i < probability.size(); i++) {
+		double cur = getProbability(i);
+		if(cur > secondaryProbability && i != maxExpression) {
+			secondaryExpression = i;
+			secondaryProbability = cur;
+		}
+	}
+	return secondaryExpression;
+}
+
 double ExpressionClassifier::getProbability(unsigned int i) const {
 	if(i < probability.size()) {
 		return probability[i];
@@ -121,6 +166,17 @@ void ExpressionClassifier::addSample(const ofxFaceTracker& tracker) {
 		addExpression();
 	}
 	expressions.back().addSample(tracker.getObjectPointsMat());
+}
+
+void ExpressionClassifier::addSample(const ofxFaceTracker& tracker, int id) {
+	if(size() == 0) {
+		addExpression();
+	}
+    if(id > size()-1)
+    {
+        return;
+    }
+	expressions[id].addSample(tracker.getObjectPointsMat());
 }
 
 void ExpressionClassifier::reset() {
